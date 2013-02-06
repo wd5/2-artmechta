@@ -1,0 +1,5 @@
+msgid "InheritanceUser"
+msgstr "Пользователи"
+
+msgid "inheritanceuser"
+msgstr "пользователи"

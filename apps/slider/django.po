@@ -1,0 +1,17 @@
+msgid "Slider"
+msgstr "Слайдер"
+
+msgid "slider"
+msgstr "Слайдер"
+
+msgid "slider_photo"
+msgstr "фотография"
+
+msgid "slider_photos"
+msgstr "фотографии"
+
+msgid "interior_photo"
+msgstr "фотография"
+
+msgid "interior_photos"
+msgstr "Фотографии Интерьеров"

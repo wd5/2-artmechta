@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+
+{% load thumbnail siteblocks_extras pages_extras products_extras %}
+
+{% block title %}
+        Регистрация &mdash;
+{% endblock %}
+
+{% block main %}
+    	<div class="modal_add_adr">
+    		<h1>Регистрация</h1>
+    		<form method="post" action="/registration_form/">{% csrf_token %}
+    			<div class="add_adr_input">
+    				<label>Электронная почта</label>
+                    {{ reg_form.email }}
+                    {{ reg_form.username.errors }}
+                    {{ reg_form.email.errors }}
+                    {{ error_mess }}
+    			</div>
+    			<div class="add_adr_input">
+    				<label>Пароль</label>
+                    {{ reg_form.password1 }}
+                    {{ reg_form.password1.errors }}
+    			</div>
+    			<div class="add_adr_input">
+    				<label>Пароль еще раз</label>
+                    {{ reg_form.password2 }}
+                    {{ reg_form.password2.errors }}
+                    {{ reg_form.non_field_errors }}
+    			</div>
+    			<div class="adr_add_submit"><div class="btn3"><div class="btn3_in"><input type="submit" value="Зарегистрироваться" /></div></div></div>
+    		</form>
+    		<div class="add_adr_modal_shade"></div>
+    	</div>
+{% endblock %}
