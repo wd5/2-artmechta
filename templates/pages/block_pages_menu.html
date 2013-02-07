@@ -1,0 +1,5 @@
+{% for item in menu %}
+    <li{% if current == item.get_absolute_url %} class="current"{% endif %}><a href="{{ item.get_absolute_url }}">{{ item.title }}</a></li>
+    <li class="menu_measure"></li>
+{% endfor %}
+{#		<li><a href="#" class="ajax_lnk">Обратная связь</a></li>#}

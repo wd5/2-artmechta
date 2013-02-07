@@ -25,7 +25,7 @@ from django import forms
 
 class InteriorPhotoAdminForm(forms.ModelForm):
     image = forms.ImageField(
-    	widget=AdminImageCrop(attrs={'path': 'slider/photo'}),
+    	widget=AdminImageCrop(attrs={'path': 'slider/interiorphoto'}),
     	label=u'Изображение'
     )
     model = InteriorPhoto
@@ -35,6 +35,6 @@ class InteriorPhotoAdmin(AdminImageMixin, admin.ModelAdmin):
     list_display_links = ('id','admin_photo_preview',)
     list_editable = ('order','is_published',)
     list_filter = ('is_published',)
-    form = InteriorPhotoAdminForm
+    #form = InteriorPhotoAdminForm
 
 admin.site.register(InteriorPhoto, InteriorPhotoAdmin)

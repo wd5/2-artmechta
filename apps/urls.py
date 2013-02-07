@@ -7,10 +7,9 @@ from views import index
 
 urlpatterns = patterns('',
     url(r'^$',index, name='index'),
-    url(r'^faq/', include('apps.faq.urls')),
-    url(r'^cart/', include('apps.orders.urls')),
-    url(r'^cabinet/', include('apps.inheritanceUser.urls')),
-
+    (r'^cart/', include('apps.orders.urls')),
+    (r'^cabinet/', include('apps.inheritanceUser.urls')),
+    (r'^catalog/', include('apps.products.urls')),
 
 )
 #url(r'^captcha/', include('captcha.urls')),

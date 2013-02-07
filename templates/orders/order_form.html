@@ -1,0 +1,115 @@
+{% extends "base.html" %}
+
+{% load thumbnail products_extras pytils_numeral %}
+
+{% block title %}
+    Оформление заказа &mdash;
+{% endblock %}
+
+{% block left %}
+    <div class="blk_cart">
+        <div class="group">
+            <div class="group_title">Ваш заказ</div>
+            {% for cart_product in cart.get_products %}
+                <div class="blk_cart_item">
+                    <div class="blk_cart_img">
+                        <a href="{{ cart_product.product.get_absolute_url }}">
+                            {% thumbnail cart_product.product.image "71x55" as im %}
+                               <img src="{{ im.url }}" width="{{ im.width }}" height="{{ im.height }}" alt="" />
+                            {% endthumbnail %}
+                        </a>
+                    </div>
+                    <div class="blk_cart_cat">{{ cart_product.product.category.title }}</div>
+                    <div class="blk_cart_name"><a href="{{ cart_product.product.get_absolute_url }}">{{ cart_product.product.title }}</a></div>
+                    <div class="blk_cart_price">{{ cart_product.get_str_total }} <span>руб.</span></div>
+                </div>
+            {% endfor %}
+        </div>
+    </div><!--/blk_cart-->
+{% endblock %}
+
+{% block main %}
+    <div class="checkout">
+        <h1>Оформление заказа</h1>
+
+        <form class="order_form" method="post" action="/cart/order_form_step2/">{% csrf_token %}
+
+            <div style="display: none;"> <!-- none; -->
+                {{ order_form.errors }}
+                {{ order_form.order_status }}
+                {{ order_form.order_status.errors }}
+                {{ order_form.profile }}
+                {{ order_form.profile.errors }}
+                {{ order_form.total_price }}
+                {{ order_form.total_price.errors }}
+            </div>
+
+            <div class="check_title">
+                <span class="check_num">1</span>
+                Контактные данные
+                {% if not user.is_authenticated %}<div class="check_help">Уже зарегистрированы? <a href="#auth_form" class="fancybox ajax_lnk">Войти</a></div>{% endif %}
+            </div>
+
+            <div class="input i-fio">
+                <span class="input_title">ФИО</span>
+                {{ order_form.full_name }}
+                {{ order_form.full_name.errors }}
+            </div>
+            <div class="input i-email">
+                <span class="input_title">Эл. почта</span>
+                {{ order_form.email }}
+                {{ order_form.email.errors }}
+                <div class="help_text">Вышлем всю информацию о заказе</div>
+            </div>
+            <div class="input i-phone">
+                <span class="input_title">Телефон</span>
+                <span class="input_start">+7</span>
+                {{ order_form.phone }}
+                {{ order_form.phone.errors }}
+                <div class="help_text">Свяжемся, чтобы уточнить детали</div>
+            </div>
+
+            <div class="check_title">
+                <span class="check_num">2</span>
+                Доставка товара
+                <div class="check_help">Мы доставляем товар в любое место Санкт-Петербурга</div>
+            </div>
+
+            <div class="input i-address">
+                <span class="input_title">Адрес</span>
+                <span class="input_start">Санкт-Петербург,</span>
+                {{ order_form.address }}
+                {{ order_form.address.errors }}
+            </div>
+            <div class="textarea ta-note">
+                <span class="textarea_title">Примечание</span>
+                {{ order_form.note }}
+                {{ order_form.note.errors }}
+                <span class="textarea_help">Номер домофона или другая полезная информация</span>
+            </div>
+
+            <div class="check_title">
+                <span class="check_num">2</span>
+                Оплата заказа
+                <div class="check_help">Общая стоимость заказа: <b>{{ cart.get_str_total }}</b> руб.</div>
+            </div>
+
+            <div class="pay">К оплате мы принимаем наличные и их можно передать курьеру при получении и проверки товара.
+                <div class="checkbox ch-coupon">
+                    {{ order_form.is_coupon_code }}
+                    {{ order_form.is_coupon_code.errors }}
+                    <span class="checkbox_title">У меня есть купон на скидку</span>
+                </div>
+
+                <div class="submit">
+                    <div>
+                        <input type="submit" name="cart_submit" value="Отправить заказ" />
+                    </div>
+                </div>
+            </div>
+
+        </form>
+    </div><!--/checkout-->
+{% endblock %}
+
+

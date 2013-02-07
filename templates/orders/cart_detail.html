@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+
+{% load thumbnail products_extras pytils_numeral %}
+
+{% block title %}
+    Ваш заказ &mdash;
+{% endblock %}
+
+{% block left %}
+    {% block_categories_menu '' %}
+{% endblock %}
+
+{% block main %}
+    <div class="cart">
+        {% if is_empty %}
+            <h1>Корзина пока пуста</h1>
+        {% else %}
+            <h1>Ваш заказ <span class="cart_cnt">{{ count }} товар{{ count|choose_plural:",а,ов" }}</span></h1>
+            {% for cart_product in cart_products %}
+                <div class="cart_item">
+                    <div class="cart_item_img">
+                        <a href="#" class="item_img_pic">
+                            {% thumbnail cart_product.product.image "200x200" as im %}
+                               <img src="{{ im.url }}" width="{{ im.width }}" height="{{ im.height }}" alt="{{ cart_product.product.title }}" />
+                            {% endthumbnail %}
+                            <span class="item_img_fr_t"></span>
+                            <span class="item_img_fr_b"></span>
+                            <span class="item_img_fr_l"></span>
+                            <span class="item_img_fr_r"></span>
+                        </a>
+                    </div>
+                    <div class="cart_item_des">
+                        <div class="cart_item_cat big_space">{{ cart_product.product.category.title }}</div>
+                        <div class="cart_item_name">
+                            <a href="{{ cart_product.product.get_absolute_url }}">{{ cart_product.product.title }}</a>
+                        </div>
+                        <div class="item_pars">{% for fvalue in cart_product.product.get_published_features %}{{ fvalue.value }}{% if not forloop.last %}/{% endif %}{% endfor %}
+                                    {{ cart_product.product.get_size }}</div>
+                        <div class="cart_item_type">под заказ</div>
+                    </div>
+                    <div class="cart_item_cnt">
+                        <input type="hidden" class="prod_price" value="{{ cart_product.product.price|floatformat:-2 }}">
+                        <input type="hidden" class="cart_product_id" value="{{ cart_product.id }}">
+                        <a href="#" class="cart_item_minus{% if cart_product.count == 1 %} nomore{% endif %}"></a>
+                        <span><span class="count_val">{{ cart_product.count }}</span> шт.</span>
+                        <a href="#" class="cart_item_plus"></a>
+                    </div>
+                    <div class="cart_item_price">
+                        <div class="item_price"><span class="product_price_value">{{ cart_product.get_str_total }}</span> <span class="item_price_rub">руб.</span></div>
+                        <a href="#" class="cart_item_delete"></a>
+                    </div>
+                </div>
+            {% endfor %}
+
+            <div class="cart_total">
+                <div class="cart_total_title">Итоговая стоимость</div>
+                <div class="item_price"><span class="total_price_value">{{ cart_str_total }}</span> <span class="item_price_rub">руб.</span></div>
+                <div class="submit">
+                    <div>
+                        <a href="/cart/show_order_form/">Оформить заказ</a>
+                    </div>
+                </div>
+            </div>
+        {% endif %}
+    </div><!--/cart-->
+{% endblock %}
+
+

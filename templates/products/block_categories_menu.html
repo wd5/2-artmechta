@@ -1,0 +1,21 @@
+<div class="blk_menu">
+	<ul>
+        {% for categ in menu %}
+            <li{% if categ.id == parent_id %} class="current"{% endif %}>
+                <a href="{{ categ.get_absolute_url }}" class="blk_menu_lnk
+                {% if categ.id == 1 %} blk_pic{% endif %}
+                {% if categ.id == 2 %} blk_glass{% endif %}
+                {% if categ.id == 3 %} blk_relef{% endif %}">{{ categ.title }}</a>
+                {% if categ.id == parent_id %}
+                    {% if categ.get_children %}
+                        <ul>
+                            {% for child in categ.get_children %}
+                                <li{% if child.id == child_id %} class="current"{% endif %}><a href="{{ child.get_absolute_url }}">{{ child.title }}</a></li>
+                            {% endfor %}
+                        </ul>
+                    {% endif %}
+                {% endif %}
+            </li>
+        {% endfor %}
+	</ul>
+</div><!--/blk_menu-->

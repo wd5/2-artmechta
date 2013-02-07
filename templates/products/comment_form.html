@@ -1,0 +1,36 @@
+<div class="form comment_form">
+    <span class="form_caption">Добавить отзыв</span>
+    <div style="display: none;">
+        {{ form.errors }}
+        {{ form.product }}
+        {{ form.product.errors }}
+        {{ form.rating }}
+        {{ form.rating.errors }}
+        <input id="product_id" value="{{ form.product.value }}">
+    </div>
+    <div class="input">
+        <label>Имя</label>
+        {{ form.name }}
+        {{ form.name.errors }}
+    </div>
+    <div class="input">
+        <div class="rating rating_input">
+            <span class="{% if form.rating.value >= 1 %}rating_all{% else %}rating_non{% endif %}" title="1"></span>
+            <span class="{% if form.rating.value >= 2 %}rating_all{% else %}rating_non{% endif %}" title="2"></span>
+            <span class="{% if form.rating.value >= 3 %}rating_all{% else %}rating_non{% endif %}" title="3"></span>
+            <span class="{% if form.rating.value >= 4 %}rating_all{% else %}rating_non{% endif %}" title="4"></span>
+            <span class="{% if form.rating.value >= 5 %}rating_all{% else %}rating_non{% endif %}" title="5"></span>
+        </div>
+    </div>
+{% comment %}    <div class="input">
+        <label>E-mail</label>
+        {{ form.email }}
+        {{ form.email.errors }}
+    </div>{% endcomment %}
+    <div class="textarea">
+        <label>Текст отзыва</label>
+        {{ form.text }}
+        {{ form.text.errors }}
+    </div>
+    <div class="submit"><input type="button" id="send_comment" value="Отправить" /></div>
+</div>

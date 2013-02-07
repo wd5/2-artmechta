@@ -53,14 +53,14 @@ class InteriorPhoto(ImageCropMixin, models.Model):
     order = models.IntegerField(verbose_name=u'Порядок сортировки',default=10)
     is_published = models.BooleanField(verbose_name = u'Опубликовано', default=True)
 
-    crop_size = [300, 200]
+    crop_size = []
 
     objects = PublishedManager()
 
     class Meta:
         verbose_name =_(u'interior_photo')
         verbose_name_plural =_(u'interior_photos')
-        ordering = ['-order',]
+        ordering = ['-order']
 
     def __unicode__(self):
         return u'ID фото %s' %self.id

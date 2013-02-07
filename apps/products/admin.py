@@ -50,6 +50,7 @@ class ProductAdminForm(forms.ModelForm):
     description.label=u'Описание'
     category = forms.ModelChoiceField(queryset=Category.objects.filter(is_published=True).exclude(parent=None),
         label=u'Категория', required=True)
+    price = forms.DecimalField(label=u'Цена',  required=True)
 
     class Meta:
         model = Product

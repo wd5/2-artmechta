@@ -32,4 +32,7 @@ urlpatterns = patterns('apps.inheritanceUser.views',
             {'template_name': 'users/password_change_done.html'},
         name='auth_password_change_done'),
 
+    # AJAX
+    (r'^add_product_to_favorite/$', 'add_product_to_favorite'),
+
 )

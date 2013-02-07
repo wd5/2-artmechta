@@ -25,8 +25,8 @@ class CustomUserManager(UserManager):
             email = ''
 
         user = self.model(username=username, email=email, is_staff=False,
-                         is_active=True, is_superuser=False, last_login=now,
-                         date_joined=now)
+            is_active=True, is_superuser=False, last_login=now,
+            date_joined=now)
 
         user.set_password(password)
         user.save(using=self._db)
@@ -35,13 +35,12 @@ class CustomUserManager(UserManager):
 sex_choices = (
     (u'male', u'Мужской'),
     (u'female', u'Женский'),
-)
+    )
 
 class CustomUser(User):
     """User with app settings."""
     third_name = models.CharField(max_length=20, verbose_name=u'отчество', blank=True)
     phone = models.CharField(max_length=20, verbose_name=u'телефон', blank=True)
-    fav_products = models.ManyToManyField(Product, verbose_name=u'Избранные товары', blank=True, null=True)
 
     # Use UserManager to get the create_user method, etc.
     objects = CustomUserManager()
@@ -54,7 +53,10 @@ class CustomUser(User):
         return self.order_set.all()
 
     def get_fav_products(self):
-        return self.fav_products.published()
+        try:
+            return self.favorites.fav_products.published()
+        except:
+            return []
 
     def get_name(self):
         if self.last_name or self.first_name or self.third_name:
@@ -64,3 +66,16 @@ class CustomUser(User):
                 return '%s %s' % (self.last_name, self.first_name)
         else:
             return u''
+
+
+class Favorites(models.Model):
+    profile = models.OneToOneField(CustomUser, verbose_name=u'Профиль', blank=True, null=True)
+    sessionid = models.CharField(max_length=50, verbose_name=u'ID сессии', blank=True, )
+    fav_products = models.ManyToManyField(Product, verbose_name=u'Избранные товары', blank=True, null=True)
+
+    class Meta:
+        verbose_name = _(u'favorites')
+        verbose_name_plural = _(u'favorites')
+
+    def __unicode__(self):
+        return u'избранное'

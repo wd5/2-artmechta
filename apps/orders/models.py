@@ -26,7 +26,11 @@ class Cart(models.Model):
         return CartProduct.objects.select_related().filter(cart=self)
 
     def get_products_count(self):
-        return self.get_products().count()
+        count = 0
+        for item in self.get_products():
+            count += item.count
+        return count
+        #return self.get_products().count()
 
     def get_total(self):
         sum = 0
@@ -92,12 +96,12 @@ class Order(models.Model):
     phone = models.CharField(max_length=50, verbose_name=u'телефон')
 
     order_status = models.CharField(max_length=30, verbose_name=u'Статус заказа', choices=order_status_choices, )
-    is_coupon_code = models.BooleanField(verbose_name = u'Есть купон на скидку', default=True)
+    is_coupon_code = models.BooleanField(verbose_name = u'Есть купон на скидку', default=False)
 
     address = models.CharField(max_length=70, verbose_name=u'адрес')
     note = models.CharField(max_length=255, verbose_name=u'примечание', blank=True)
 
-    total_price = models.CharField(max_length=100, verbose_name=u'общая стоимость')
+    total_price = models.DecimalField(verbose_name=u'общая стоимость', decimal_places=2, max_digits=10,)
     create_date = models.DateTimeField(verbose_name=u'Дата оформления', default=datetime.datetime.now)
 
     class Meta:
@@ -112,7 +116,11 @@ class Order(models.Model):
         return self.orderproduct_set.select_related().all()
 
     def get_products_count(self):
-        return self.get_products().count()
+        count = 0
+        for item in self.get_products():
+            count += item.count
+        return count
+        #return self.get_products().count()
 
     def get_total(self):
         if self.total_price:

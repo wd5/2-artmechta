@@ -1,0 +1,22 @@
+{% load pytils_numeral thumbnail %}
+
+{% for item in items %}
+
+    <div class="recall loaded" style="display: none;">
+        <div class="recall-foto">
+            {% thumbnail item.image "54x54"  as im %}
+                <img src="{{ im.url }}" width="{{ im.width }}" height="{{ im.height }}" alt="" />
+            {% endthumbnail %}
+        </div>
+        <div class="recall-des">
+            <div class="recall-name">{{ item.name }} <span>:-)</span></div>
+            <div class="recall-city">{{ item.city }}</div>
+            <div class="recall-text">{{ item.text }}</div>
+        </div>
+    </div>
+
+{% endfor %}
+
+{% if remaining_count %}
+        <input type="hidden" id="remaining_count_text" value="Загрузить ещё {{ remaining_count }} отзыв{{ remaining_count|choose_plural:",а,ов" }}">
+{% endif %}

@@ -1,0 +1,27 @@
+{% load pytils_numeral %}
+{% if path != '/catalog/favorites/' %}
+    {% if count %}
+        <div class="blk_top blk_favor">
+            <div class="blk_title">Понравилось</div>
+            <div class="blk_lnk"><a href="/catalog/favorites/" class="fav_count">{{ count }} предмет{{ count|choose_plural:",а,ов" }}</a></div>
+        </div><!--/blk-top-->
+    {% else %}
+        <div class="blk_top blk_favor">
+            <div class="blk_title">Понравилось</div>
+            <div class="blk_lnk"><a href="/catalog/favorites/" class="fav_count">0 предметов</a></div>
+        </div><!--/blk-top-->
+    {% endif %}
+{% else %}
+    {% if count %}
+        <div class="blk_top blk_favor">
+            <div class="blk_title">Понравилось</div>
+            <div class="blk_lnk fav_count">{{ count }} предмет{{ count|choose_plural:",а,ов" }}</div>
+        </div><!--/blk-top-->
+    {% else %}
+        <div class="blk_top blk_favor">
+            <div class="blk_title">Понравилось</div>
+            <div class="blk_lnk fav_count">0 предметов</div>
+        </div><!--/blk-top-->
+    {% endif %}
+{% endif %}
+

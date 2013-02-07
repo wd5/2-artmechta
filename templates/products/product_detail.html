@@ -1,0 +1,123 @@
+{% extends "base.html" %}
+
+{% load thumbnail products_extras %}
+
+{% block title %}
+    {{ product.title }} &mdash;
+{% endblock %}
+
+{% block left %}
+    {% block_categories_menu product.category.id %}
+{% endblock %}
+
+{% block main %}
+    <div class="bread">
+        {{ product.category.get_bread_product|safe }}
+    </div><!--/bread-->
+    <div class="item_page item_ajax">
+        <h1 class="big_space">{{ product.title }}<a href="#" name="{{ product.id }}" class="add_favor{% if product.is_fav %} is_favor{% endif %} "></a></h1>
+        <div class="big_pic_out">
+            <div class="big_pic item_img_fly_block">
+                <div>
+                    {% thumbnail product.image "759x578" as im %}
+                       <img src="{{ im.url }}" width="{{ im.width }}" height="{{ im.height }}" alt="main" />
+                    {% endthumbnail %}
+                    {% for photo in product.get_photos %}
+                        {% thumbnail photo.image "759x578" as im %}
+                            <img src="{{ im.url }}" width="{{ im.width }}" height="{{ im.height }}" alt="{{ photo.id }}" style="display: none;" />
+                        {% endthumbnail %}
+                    {% endfor %}
+
+                    <span class="item_img_fr_t"></span>
+                    <span class="item_img_fr_b"></span>
+                    <span class="item_img_fr_l"></span>
+                    <span class="item_img_fr_r"></span>
+                </div>
+            </div>
+        </div>
+        <div class="item_left">
+            {% if product.get_photos %}
+                <div class="item_pics">
+                    <a href="#" name="main" class="current">
+                        {% thumbnail product.image "74x58" as im %}
+                           <img src="{{ im.url }}" width="{{ im.width }}" height="{{ im.height }}" alt="" />
+                        {% endthumbnail %}
+                    </a>
+                    {% for photo in product.get_photos %}
+                        <a href="#" name="{{ photo.id }}">
+                            {% thumbnail photo.image "74x58" as im %}
+                               <img src="{{ im.url }}" width="{{ im.width }}" height="{{ im.height }}" alt="" />
+                            {% endthumbnail %}
+                        </a>
+                    {% endfor %}
+                </div>
+            {% endif %}
+
+            <div class="item_text">{{ product.description|safe }}</div>
+            <div class="otzivs">
+                <div class="otziv_title">Рейтин и отзывы {% if comments %}<span>({{ comments.count }})</span>{% endif %}</div>
+
+                {% if comments %}
+                    <div class="rating_avg">
+                        {{ product.get_raiting_stars|safe }}
+                    </div>
+                {% endif %}
+
+                {% for comment in comments %}
+                    <div class="otziv">
+                         <div class="otziv_autor">{{ comment.name }}</div>
+                         <div class="otziv_des">
+                             {{ comment.text }}
+                             <div class="rating">
+                                 {{ comment.get_raiting_stars|safe }}
+                             </div>
+                         </div>
+                     </div>
+                {% endfor %}
+                <a href="add_comment/" class="fancybox fancybox.ajax otziv_add">Добавить отзыв</a>
+            </div>
+        </div><!--/item_left-->
+        <div class="item_right">
+            <div class="group">
+                <div class="group_title">О картине</div>
+                <table class="item_page_pars">
+                    {% for feature_value in product.get_feature_values %}
+                        <tr>
+                            <td>{{ feature_value.feature_name.title }}</td>
+                            <td>{{ feature_value.value }}</td>
+                        </tr>
+                    {% endfor %}
+                    <tr>
+                        <td>высота</td>
+                        <td>{{ product.height }} см</td>
+                    </tr>
+                    <tr>
+                        <td>ширина</td>
+                        <td>{{ product.width }} см</td>
+                    </tr>
+                    <tr>
+                        <td>цена</td>
+                        <td><div class="item_page_price">{{ product.get_str_price }} <span>руб.</span> </div></td>
+                    </tr>
+                    <tr>
+                        <td>{{ product.is_avaliable|yesno:"<b>есть<br/>в наличии</b>,<b>нет<br/>в наличии</b>"|safe }}
+
+                        </td>
+                        <td>
+                            <div class="submit">
+                                <div>
+                                    <a href="#" class="add_to_cart" name="{{ product.id }}">Добавить в заказ</a>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+            <div class="add_to_favor">
+                <a href="#" class="add_favor_alter" name="{{ product.id }}"><span class="add_favor{% if product.is_fav %} is_favor{% endif %}"></span> <b>в избранное</b></a>
+            </div>
+        </div>
+    </div><!--/item_page-->
+{% endblock %}
+
+

@@ -1,0 +1,77 @@
+{% extends "base.html" %}
+
+{% load thumbnail products_extras pytils_numeral %}
+
+{% block title %}
+    Избранное &mdash;
+{% endblock %}
+
+{% block left %}
+    {% block_categories_menu '' %}
+{% endblock %}
+
+{% block main %}
+    <div class="favors">
+        <h1>Вам понравилось <span class="cart_cnt">{{ fav_products.count }} товар{{ fav_products.count|choose_plural:",а,ов" }}</span></h1>
+        {% for product in fav_products %}
+            <div class="favor item_ajax">
+                <div class="favor_img item_img_fly_block">
+                    <a href="{{ product.get_absolute_url }}" class="item_img_pic">
+                        {% thumbnail product.image "200x200" as im %}
+                           <img src="{{ im.url }}" width="{{ im.width }}" height="{{ im.height }}" alt="{{ product.title }}" />
+                        {% endthumbnail %}
+                        <span class="item_img_fr_t"></span>
+                        <span class="item_img_fr_b"></span>
+                        <span class="item_img_fr_l"></span>
+                        <span class="item_img_fr_r"></span>
+                    </a>
+                </div>
+                <div class="favor_des">
+                    <div class="favor_cat">{{ product.category.title }}</div>
+                    <div class="favor_name"><a href="{{ product.get_absolute_url }}">{{ product.title }}</a><a href="#" name="{{ product.id }}" class="add_favor is_favor"></a></div>
+                    <div class="favor_text">{{ product.short_description|safe }}</div>
+                </div>
+                <div class="favor_pars">
+                    <div class="group">
+                        <div class="group_title">О картине</div>
+                        <table class="item_page_pars">
+                            {% for feature_value in product.get_feature_values %}
+                                <tr>
+                                    <td>{{ feature_value.feature_name.title }}</td>
+                                    <td>{{ feature_value.value }}</td>
+                                </tr>
+                            {% endfor %}
+                            <tr>
+                                <td>высота</td>
+                                <td>{{ product.height }} см</td>
+                            </tr>
+                            <tr>
+                                <td>ширина</td>
+                                <td>{{ product.width }} см</td>
+                            </tr>
+                            <tr>
+                                <td>цена</td>
+                                <td><div class="item_page_price">{{ product.get_str_price }} <span>руб.</span> </div></td>
+                            </tr>
+                            <tr>
+                                <td>{{ product.is_avaliable|yesno:"<b>есть<br/>в наличии</b>,<b>нет<br/>в наличии</b>"|safe }}
+
+                                </td>
+                                <td>
+                                    <div class="submit">
+                                        <div>
+                                            <a href="#" class="add_to_cart" name="{{ product.id }}">Добавить в заказ</a>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+
+    </div><!--/favors-->
+{% endblock %}
+
+

@@ -1,0 +1,19 @@
+<div class="footer_cats">
+	<div class="footer_cat_img">
+		<img src="{{ footer_pic|random }}" alt="Живопись" />
+	</div>
+    {% for category in categories %}
+        <div class="footer_cat{% if category.id == 1 %} footer_cat_pic{% endif %}
+        {% if category.id == 2 %} footer_cat_glass{% endif %}
+        {% if category.id == 3 %} footer_cat_relef{% endif %}">
+    		<div class="footer_cat_name"><a href="{{ category.get_absolute_url }}">{{ category.title }}</a></div>
+            {% if category.get_children_footer_menu %}
+                <ul>
+                    {% for child in category.get_children_footer_menu %}
+                        <li><a href="{{ child.get_absolute_url }}">{{ child.title }}</a></li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+    	</div>
+    {% endfor %}
+</div>

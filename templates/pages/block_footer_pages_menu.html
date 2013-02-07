@@ -1,0 +1,6 @@
+<ul>
+    {% for item in menu %}
+        <li><a href="{{ item.get_absolute_url }}">{{ item.title }}</a></li>
+    {% endfor %}
+{#	<li><a href="#" class="ajax_lnk">Обратная связь</a></li>#}
+</ul>

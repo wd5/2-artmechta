@@ -66,6 +66,32 @@ def moneyfmt(value, places=2, curr='', sep=' ', dp='.',
     except:
         return result
 
+
+def url_spliter(url,cut_count):
+    url = url.split('/')
+    current = ''
+    counter = 0
+    if len(url)>1:
+        for part in url[1:]:
+            counter = counter + 1
+            if cut_count==False:
+                current = '%s/%s' % (current,part)
+            else:
+                if counter <= cut_count:
+                    current = '%s/%s' % (current,part)
+                else:
+                    pass
+    else:
+        current = u'/'
+
+    if not current.startswith('/'):
+        current = '/%s' % current
+    if not current.endswith('/'):
+        current = '%s/' % current
+    current = current.replace('//,', '/')
+
+    return current
+
 def random_key(length=6, allowed_chars='abcdefghjkmnpqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ23456789'):
     from random import choice
 

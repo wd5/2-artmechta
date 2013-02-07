@@ -1,23 +1,60 @@
 {% extends "base.html" %}
 
-{% load thumbnail %}
+{% load thumbnail products_extras %}
 
-{% if page.title %}
-    {% block title %}
-        {{ page.title }} &mdash;
-    {% endblock %}
-{% endif %}
-
-{% block center %}
-    <div class="text text_page">
-        {% if page.image %}
-            <p>
-                {% thumbnail page.image "374x252" as  small %}
-                    <img src="{{ small.url }}" width="{{ small.x }}" height="{{ small.y }}" alt="" />
-                {% endthumbnail %}
-            </p>
-        {% endif %}
-        {{ page.content|safe }}
-    </div>
+{% block title %}
+    Главная &mdash;
 {% endblock %}
+
+{% block pre_left %}
+    <div class="top">
+        <div class="top_relef">
+            <img src="/media/img/relef.png" alt="Рельефные картины" />
+            <div class="top_text">Рельефные картины</div>
+        </div>
+        <div class="top_glass">
+            <img src="/media/img/glass.png" alt="Художественное стекло" />
+            <div class="top_text">Художественное стекло</div>
+        </div>
+        <div class="top_pic">
+            <img src="/media/img/pic.png" alt="Живопись" />
+            <div class="top_text">Живопись</div>
+        </div>
+        <div class="top_bot"></div>
+    </div><!--/top-->
+{% endblock %}
+
+{% block left %}
+    {% block_categories_menu '' %}
+{% endblock %}
+
+{% block main %}
+    <h1 class="big_space">Интерьеры с нашими товарами</h1>
+    <div class="interers">
+        {% for interiorPhoto in interiorPhotos %}
+            <div class="interer{% if forloop.first %} col2{% endif %}">
+                {% if forloop.first %}
+                    {% thumbnail interiorPhoto.image "370" as im %}
+                       <img src="{{ im.url }}" width="{{ im.width }}" height="{{ im.height }}" alt="" />
+                    {% endthumbnail %}
+                {% else %}
+                    {% thumbnail interiorPhoto.image "174" as im %}
+                        <img src="{{ im.url }}" width="{{ im.width }}" height="{{ im.height }}" alt="" />
+                    {% endthumbnail %}
+                {% endif %}
+                <div class="interer_fr"></div>
+            </div>
+        {% endfor %}
+    </div><!--/interers-->
+{% comment %}    <div class="items_load_out"> TODO! ПОДГРУЗКА
+        <div class="items_load">
+            <a href="#" class="ajax_lnk">Загрузить еще 12 интерьеров</a>
+            <div>осталось 26</div>
+        </div>
+    </div>{% endcomment %}
+{% endblock %}
+
+{% block footer_class %}{% endblock %}
+{% block footer_categories %}{% endblock %}
+
 

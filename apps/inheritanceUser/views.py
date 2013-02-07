@@ -1,11 +1,14 @@
 # -*- coding: utf-8 -*-
+from django.views.decorators.csrf import csrf_exempt
+from pytils.numeral import choose_plural
+from apps.products.models import Product
 import  settings
-from django.http import   HttpResponseRedirect
+from django.http import   HttpResponseRedirect, HttpResponseBadRequest, HttpResponse
 from django.shortcuts import render_to_response
 from django.template.loader import render_to_string
-from django.views.generic import FormView, TemplateView
+from django.views.generic import FormView, TemplateView, View
 from apps.inheritanceUser.forms import ProfileForm, RegistrationForm
-from apps.inheritanceUser.models import CustomUser
+from apps.inheritanceUser.models import CustomUser, Favorites
 from apps.orders.models import Order
 from django.core.urlresolvers import reverse
 from django.contrib.auth import  authenticate as auth_check, login as auth_login
@@ -123,3 +126,86 @@ class ShowCabinetView(TemplateView):
 
 show_cabinet = ShowCabinetView.as_view()
 
+
+# AJAX
+
+class AddProductToFavorite(View):
+    def post(self, request, *args, **kwargs):
+        if not request.is_ajax():
+            return HttpResponseRedirect('/')
+        else:
+            if 'product_id' not in request.POST:
+                return HttpResponseBadRequest()
+            count = 0
+            try:
+                product = Product.objects.get(id=int(request.POST['product_id']))
+            except:
+                return HttpResponseBadRequest()
+
+            if request.user.is_authenticated and request.user.id:
+                profile_id = request.user.id
+                profile = CustomUser.objects.get(id=profile_id)
+            else:
+                profile = False
+
+            response = HttpResponse()
+            sessionid = request.session.session_key
+            cookies = request.COOKIES
+            artmechta_fav_id = False
+            if 'artmechta_fav_id' in cookies:
+                artmechta_fav_id = cookies['artmechta_fav_id']
+
+            if profile:
+                try:
+                    fav = Favorites.objects.get(profile=profile)
+                except Favorites.DoesNotExist:
+                    if artmechta_fav_id:
+                        try:
+                            fav = Favorites.objects.get(id=artmechta_fav_id)
+                            if fav.profile:
+                                if profile:
+                                    fav = Favorites.objects.create(profile=profile)
+                                else:
+                                    return HttpResponseBadRequest()
+                            else:
+                                if profile:
+                                    fav.profile = profile
+                                    fav.save()
+                                else:
+                                    return HttpResponseBadRequest()
+                        except:
+                            if profile:
+                                fav = Favorites.objects.create(profile=profile)
+                            else:
+                                return HttpResponseBadRequest()
+                    else:
+                        fav = Favorites.objects.create(profile=profile)
+            elif artmechta_fav_id:
+                try:
+                    fav = Favorites.objects.get(id=artmechta_fav_id)
+                except Favorites.DoesNotExist:
+                    fav = Favorites.objects.create(sessionid=sessionid)
+            else:
+                try:
+                    fav = Favorites.objects.get(sessionid=sessionid)
+                except Favorites.DoesNotExist:
+                    fav = Favorites.objects.create(sessionid=sessionid)
+
+
+            if fav:
+                response.set_cookie('artmechta_fav_id', fav.id, 1209600)
+                try:
+                    fav_products = fav.fav_products.all()
+
+                    if product in fav_products:
+                        fav.fav_products.remove(product)
+                    else:
+                        fav.fav_products.add(product)
+                    fav.save()
+                    count = fav.fav_products.count()
+                except:
+                    return HttpResponseBadRequest()
+            response.content = u'%s предмет%s|%s товар%s' % (count, choose_plural(count, (u'', u'а', u'ов')),count, choose_plural(count, (u'', u'а', u'ов')))
+            return response
+
+add_product_to_favorite = csrf_exempt(AddProductToFavorite.as_view())

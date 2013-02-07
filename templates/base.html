@@ -1,14 +1,23 @@
-{% load siteblocks_extras %}
+{% load siteblocks_extras products_extras pages_extras orders_extras %}
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <meta name="description" content="{% block META_description %}{{ meta.description }}{% endblock %}"/>
     <meta name="keywords" content="{% block META_keywords %}{{ meta.keywords }}{% endblock %}"/>
-    <link href="/static/css/style.css" rel="stylesheet" type="text/css" />
-    <!--[if lte IE 8]><link rel="stylesheet" type="text/css" media="screen" href="/static/css/ie.css" /><![endif]-->
-    <script type="text/javascript" src="/static/js/jquery.js"></script>
-    <script type="text/javascript" src="/static/js/script.js"></script>
+    <link href="/media/js/fancybox/jquery.fancybox.css" rel="stylesheet" type="text/css" />
+    <link href="/media/js/fancybox/helpers/jquery.fancybox-thumbs.css" rel="stylesheet" type="text/css" />
+    <link href="/media/css/style.css" rel="stylesheet" type="text/css" />
+    <!--[if lte IE 8]><link rel="stylesheet" type="text/css" media="screen" href="/media/css/ie.css" /><![endif]-->
+    <script type="text/javascript" src="/media/js/jquery.js"></script>
+    <script type="text/javascript" src="/media/js/masonry.js"></script>
+    <script type="text/javascript" src="/media/js/accounting.js"></script>
+    <script type="text/javascript" src="/media/js/fancybox/jquery.fancybox.js"></script>
+    <script type="text/javascript" src="/media/js/fancybox/helpers/jquery.fancybox-thumbs.js"></script>
+    <script type="text/javascript" src="/media/js/fancybox/helpers/jquery.fancybox-media.js"></script>
+    <script type="text/javascript" src="/media/js/sysMessage.js"></script>
+    <script type="text/javascript" src="/media/js/script.js"></script>
+    <!--[if IE 6]><script src="/media/js/DD_belatedPNG.js"></script><![endif]-->
     <title>
         {% block title %}
             {% if meta.title %}
@@ -22,6 +31,105 @@
 </head>
 
 <body>
-{% block_menu request.path %}
+<div class="wrapper">
+
+<!--PAGE-->
+<div class="page">
+
+    <!--HEADER-->
+	<div class="header">
+		<a id="logo_box" href="/" title="ArtMechta"><img id="logo" src="/media/img/logo.png" alt="ArtMechta" width="146" height="40" /></a>
+
+        <div class="menu">
+        	<ul>
+                {% block_pages_menu request.path %}
+                {% if user.is_authenticated %}
+                    <li{% if request.path == '/cabinet/' %} class="current"{% endif %}><a href="/cabinet/">Личный кабинет</a></li>
+                {% else %}
+                    <li><a href="#auth_form" class="fancybox ajax_lnk">Вход</a> <span>или <a href="/cabinet/registration_form/">регистрация</a></span></li>
+                {% endif %}
+            </ul>
+        </div><!--/menu-->
+
+		{% block_fav_products %}
+
+        {% block_cart %}
+
+		<div class="header_ring"></div>
+	</div>
+    <!--/HEADER-->
+
+    <!--MAIN-->
+	<div class="main">
+        {% block pre_left %}{% endblock %}
+        <div class="left">
+            {% block left %}{% endblock %}
+        </div><!--/left-->
+
+        <div class="right">
+            {% block main %}{% endblock %}
+        </div><!--/right-->
+    </div>
+    <!--/MAIN-->
+
+    <!--FOOTER-->
+    <div class="footer_out">
+    <div class="footer{% block footer_class %} footer_catalog{% endblock %}">
+
+        {% block footer_categories %}
+            {% block_footer_categories %}
+        {% endblock %}
+
+    	<div class="footer_main">
+			<div id="copyright">© 2012-{% now "Y" %} «ArtMechta»</div>
+			<div class="footer_menu">
+                {% block_footer_pages_menu %}
+			</div>
+			<a id="madein" title="Разработка сайта — студия OctoberWeb" href="http://octoberweb.ru/"><img id="octoberweb" alt="Разработка сайта — студия OctoberWeb" src="/media/img/octoberweb.png" width="32" height="32"/>Сайт разработан в «<span>OctoberWeb</span>»</a>
+		</div>
+    </div>
+    </div>
+    <!--/FOOTER-->
+
+</div>
+<!--/PAGE-->
+
+</div><!--/wrapper-->
+
+{% if not user.is_authenticated %}
+    <div style="display: none;">
+        <form class="auth_form" id="auth_form" method="post" action="{% url auth_login %}?next={% if request.path == '/cart/show_order_form/' %}{{ request.path }}{% else %}{{ next_url }}{% endif %}">
+            {% csrf_token %}
+            <div class="window-form">
+                <div class="window-form-title"><b>Войти</b> или <a href="/cabinet/registration_form/" class="window-form-doreg">зарегистрироваться</a></div>
+                <div class="input">
+                    <span>E-mail:</span>{{ auth_form.username }}{{ auth_form.username.errors }}
+                </div>
+                <div class="input">
+                    <span>Пароль:</span>{{ auth_form.password }}{{ auth_form.password.errors }}
+                    <a class="help-text" href="/cabinet/password/reset/">Забыли пароль?</a>
+                </div>
+                <div class="submit">
+                    <div>
+                        <input type="submit" value="Войти" />
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+{% endif %}
+
+<!-- фича для вывода всевозможных системных сообщений -->
+{% if request.GET.sys_message %}
+    <script type="text/javascript">
+        ShowSysMessage('{{ request.GET.sys_message }}', 8000);
+    </script>
+{% endif %}
+{% if sys_message %}
+    <script type="text/javascript">
+        ShowSysMessage('{{ sys_message }}', 8000);
+    </script>
+{% endif %}
+
 </body>
 </html>
