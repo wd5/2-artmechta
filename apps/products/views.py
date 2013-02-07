@@ -27,9 +27,10 @@ class ProductDetail(DetailView):
         context = super(ProductDetail, self).get_context_data()
         product = self.object
         fav = GetFavorites(self.request)
-        fav_products = fav.fav_products.published()
-        if product in fav_products:
-            setattr(product, 'is_fav', True)
+        if fav:
+            fav_products = fav.fav_products.published()
+            if product in fav_products:
+                setattr(product, 'is_fav', True)
         context['product'] = product
         context['comments'] = product.get_comments()
         return context
@@ -106,7 +107,10 @@ class FavoritesList(TemplateView):
     def get_context_data(self, **kwargs):
         context = super(FavoritesList, self).get_context_data()
         fav = GetFavorites(self.request)
-        context['fav_products'] = fav.fav_products.published()
+        if fav:
+            context['fav_products'] = fav.fav_products.published()
+        else:
+            context['fav_products'] = Product.objects.extra(where=['1=0'])
         return context
 
 favorites_list = FavoritesList.as_view()
