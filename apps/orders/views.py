@@ -152,6 +152,8 @@ class OrderFromView(FormView):
         order_form = RegistrationOrderForm(data)
         if order_form.is_valid():
             new_order = order_form.save()
+            new_order.total_price = cart.get_total()
+            new_order.save()
 
             for cart_product in cart_products:
                 ord_prod = OrderProduct(
@@ -243,14 +245,10 @@ class OrderFromView(FormView):
                     form.fields['full_name'].initial = self.request.user.get_name()
                     form.fields['email'].initial = self.request.user.email
                     form.fields['phone'].initial = profile.phone
-                    form.fields['order_status'].initial = u'processed'
-                    form.fields['total_price'].initial = cart.get_total()
                 except CustomUser.DoesNotExist:
                     return HttpResponseBadRequest()
             else:
                 form.fields['profile'].queryset = CustomUser.objects.extra(where=['1=0'])
-                form.fields['order_status'].initial = u'processed'
-                form.fields['total_price'].initial = cart.get_total()
             context['order_form'] = form
         else:
             return HttpResponseRedirect('/')

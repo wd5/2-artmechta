@@ -95,13 +95,13 @@ class Order(models.Model):
     email = models.EmailField(verbose_name=u'E-mail',max_length=75)
     phone = models.CharField(max_length=50, verbose_name=u'телефон')
 
-    order_status = models.CharField(max_length=30, verbose_name=u'Статус заказа', choices=order_status_choices, )
+    order_status = models.CharField(max_length=30, verbose_name=u'Статус заказа', choices=order_status_choices, default=u'processed')
     is_coupon_code = models.BooleanField(verbose_name = u'Есть купон на скидку', default=False)
 
     address = models.CharField(max_length=70, verbose_name=u'адрес')
     note = models.CharField(max_length=255, verbose_name=u'примечание', blank=True)
 
-    total_price = models.DecimalField(verbose_name=u'общая стоимость', decimal_places=2, max_digits=10,)
+    total_price = models.DecimalField(verbose_name=u'общая стоимость', decimal_places=2, max_digits=10, blank=True, null=True)
     create_date = models.DateTimeField(verbose_name=u'Дата оформления', default=datetime.datetime.now)
 
     class Meta:

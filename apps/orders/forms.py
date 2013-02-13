@@ -16,4 +16,4 @@ class RegistrationOrderForm(forms.ModelForm):
 
     class Meta:
         model = Order
-        exclude = ('create_date',)
+        exclude = ('create_date','total_price','order_status')
