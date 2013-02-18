@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
-{% load thumbnail products_extras %}
+{% load thumbnail products_extras pagination_tags %}
 
 {% block title %}
     {{ category.title }} &mdash;
@@ -14,6 +14,7 @@
     {% if category.category_view == 'list' %}
         <div class="catalog catalog_list">
             <h1>{{ category.title }} <span class="cart_cnt">{{ category.get_products_count_text_2 }}</span></h1>
+            {% autopaginate category_products loaded_count %}
             {% for product in category_products  %}
                 <div class="item item_ajax">
                     <div class="item_img item_img_fly_block">
@@ -37,15 +38,10 @@
                         </div>
                     </div>
                 </div>
+            {% empty %}
+                <h2>В данную категорию не добавлено картин</h2>
             {% endfor %}
-
         </div><!--/catalog-->
-        <div class="items_load_out">
-            <div class="items_load">
-                <a href="#" class="ajax_lnk">Загрузить все «{{ category.title }}»</a>
-                <div>осталось 15</div>
-            </div>
-        </div>
     {% endif %}
     {% if category.category_view == 'block' %}
         {% if category.image %}
@@ -66,7 +62,8 @@
         {% endif %}
 
         <div class="catalog catalog_table">
-            {% for product in category_products  %}
+            {% autopaginate category_products loaded_count %}
+            {% for product in category_products %}
                 <div class="item">
                     <div class="item_img">
                         <a href="{{ product.get_absolute_url }}" class="item_img_pic">
@@ -86,14 +83,18 @@
                         <div class="item_price">{{ product.get_str_price }} <span class="item_price_rub">руб.</span></div>
                     </div>
                 </div>
+            {% empty %}
+                <h2>В данную категорию не добавлено картин</h2>
             {% endfor %}
         </div><!--/catalog-->
-{% comment %}        <div class="items_load_out"> TODO! ПОДГРУЗКА
+    {% endif %}
+    {% if category_products and category_products_count > loaded_count %}
+        <div class="items_load_out">
             <div class="items_load">
-                <a href="#" class="ajax_lnk">Загрузить все «{{ category.title }}»</a>
-                <div>осталось 15</div>
+                <a href="#" class="ajax_lnk catalog_ajax_load" name="{{ loaded_count }}">Загрузить все «{{ category.title }}»</a>
+                <div>осталось {% get_next_count category_products_count loaded_count '' 'remaining' %}</div>
             </div>
-        </div>{% endcomment %}
+        </div>
     {% endif %}
 {% endblock %}
 

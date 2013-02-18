@@ -11,9 +11,10 @@ register = template.Library()
 
 @register.inclusion_tag("products/block_footer_categories.html")
 def block_footer_categories():
-    footer_pic = ['/media/img/pic_zs.png','/media/img/glass_zs.png']
+    footer_pic = ['/media/img/pic_zs.png', '/media/img/glass_zs.png']
     categories = Category.objects.filter(is_published=True, parent=None, is_footer_menu=True)
-    return {'categories': categories, 'footer_pic':footer_pic}
+    return {'categories': categories, 'footer_pic': footer_pic}
+
 
 @register.inclusion_tag("products/block_categories_menu.html")
 def block_categories_menu(id_cat):
@@ -33,7 +34,8 @@ def block_categories_menu(id_cat):
         parent_id = False
         child_id = False
 
-    return {'menu': menu, 'parent_id': parent_id, 'child_id':child_id }
+    return {'menu': menu, 'parent_id': parent_id, 'child_id': child_id}
+
 
 @register.inclusion_tag("products/block_fav_products.html", takes_context=True)
 def block_fav_products(context):
@@ -48,4 +50,28 @@ def block_fav_products(context):
         count = fav.fav_products.count()
     else:
         count = False
-    return {'count': count, 'path':path}
+    return {'count': count, 'path': path}
+
+
+@register.simple_tag
+def get_next_count(queryset_count, loaded_count, page_num, type):
+    if page_num != '':
+        try:
+            remaining_count = queryset_count - (int(loaded_count)*int(page_num))
+        except:
+            remaining_count = 0
+    else:
+        try:
+            remaining_count = queryset_count - int(loaded_count)
+        except:
+            remaining_count = 0
+    if remaining_count < 0: remaining_count = 0
+
+    if loaded_count > remaining_count:
+        load_count = remaining_count
+    else:
+        load_count = loaded_count
+    if type == 'remaining':
+        return remaining_count
+    else:
+        return load_count

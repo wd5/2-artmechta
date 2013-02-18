@@ -1,0 +1,17 @@
+{% load thumbnail products_extras pagination_tags %}
+{% autopaginate interiorPhotos loaded_count %}
+{% for interiorPhoto in interiorPhotos %}
+    <div class="interer loaded" style="display: none;">
+        {% thumbnail interiorPhoto.image "174" as im %}
+            <img src="{{ im.url }}" width="{{ im.width }}" height="{{ im.height }}" alt="" />
+        {% endthumbnail %}
+        <div class="interer_fr"></div>
+    </div>
+{% endfor %}
+<div class="items_load_out new_items_load_out">
+    <div class="items_load">
+        <a href="#" class="ajax_lnk interer_ajax_load" name="{{ request.GET.page }}">Загрузить еще {% get_next_count interiorPhotos_count loaded_count request.GET.page 'loaded' %} интерьеров</a>
+        <div>осталось {% get_next_count interiorPhotos_count loaded_count request.GET.page 'remaining' %}</div>
+        <input class="remaining_count" type="hidden" value="{% get_next_count interiorPhotos_count loaded_count request.GET.page 'remaining' %}">
+    </div>
+</div>

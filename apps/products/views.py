@@ -80,7 +80,7 @@ class CategoryDetail(DetailView):
         if category:
             context['parent_category'] = category.get_root()
             context['category'] = category
-            products = category.get_products()[:9]
+            products = category.get_products()
 
             # пометка избранных
             fav = GetFavorites(self.request)
@@ -89,12 +89,8 @@ class CategoryDetail(DetailView):
                 for product in products:
                     if product in fav_products:
                         setattr(product, 'is_fav', True)
-            try:
-                loaded_count = int(Settings.objects.get(name='loaded_count').value)
-            except:
-                loaded_count = 2
-            context['loaded_count'] = loaded_count
             context['category_products'] = products
+            context['category_products_count'] = products.count()
         else:
             context['category'] = False
         return context
@@ -132,7 +128,7 @@ class CommentFromView(FormView):
                         {
                         'saved_object': saved_object,
                         'site_name': settings.SITE_NAME,
-                    }
+                        }
                 )
                 try:
                     emailto = Settings.objects.get(name='workemail').value
@@ -148,7 +144,7 @@ class CommentFromView(FormView):
             else:
                 faq_form_html = render_to_string(
                     'products/comment_form.html',
-                    {'form': form}
+                        {'form': form}
                 )
                 return HttpResponse(faq_form_html)
         else:
@@ -220,3 +216,64 @@ def GetFavorites(request):
         return fav
     except:
         return False
+
+
+# AJAX!
+
+class LoadCatalogItems(View):
+    def post(self, request, *args, **kwargs):
+        if request.is_ajax():
+            if 'start_count' not in request.POST:
+                return HttpResponseBadRequest()
+            try:
+                start_count = int(request.POST['start_count'])
+            except:
+                start_count = 0
+            slug = self.kwargs.get('slug', None)
+            sub_slug = self.kwargs.get('sub_slug', None)
+
+            all_categories = Category.objects.filter(is_published=True)
+            category = False
+            if slug or sub_slug:
+                if sub_slug and not category:
+                    try:
+                        category = all_categories.filter(slug=sub_slug)
+                    except:
+                        pass
+                if slug and not category:
+                    try:
+                        category = all_categories.filter(slug=slug)
+                    except:
+                        pass
+            else:
+                category = False
+
+            if category and category.count() == 1:
+                category = category[0]
+            elif category and category.count() > 1: # если по slug'у будет найдено несколько категорий
+                try:
+                    category = category.get(parent__slug__in=[slug, sub_slug])
+                except:
+                    category = False
+
+            if category:
+                products = category.get_products()[start_count:]
+                # пометка избранных
+                fav = GetFavorites(self.request)
+                if fav:
+                    fav_products = fav.fav_products.published()
+                    for product in products:
+                        if product in fav_products:
+                            setattr(product, 'is_fav', True)
+                html = render_to_string(
+                    'products/catalog_ajax_load.html',
+                    {'products': products,
+                     'category': category}
+                )
+                return HttpResponse(html)
+            else:
+                return HttpResponseBadRequest()
+        else:
+            return HttpResponseBadRequest()
+
+load_items = csrf_exempt(LoadCatalogItems.as_view())

@@ -1,0 +1,47 @@
+{% load thumbnail %}
+{% for product in products %}
+    {% if category.category_view == 'block' %}
+        <div class="item loaded" style="display: none;">
+            <div class="item_img">
+                <a href="{{ product.get_absolute_url }}" class="item_img_pic">
+                    {% thumbnail product.image "200x200" as im %}
+                       <img src="{{ im.url }}" width="{{ im.width }}" height="{{ im.height }}" alt="{{ product.title }}" />
+                    {% endthumbnail %}
+                    <span class="item_img_fr_t"></span>
+                    <span class="item_img_fr_b"></span>
+                    <span class="item_img_fr_l"></span>
+                    <span class="item_img_fr_r"></span>
+                </a>
+            </div>
+            <div class="item_des">
+                <div class="item_name"><a href="{{ product.get_absolute_url }}">{{ product.title }}</a> <a href="#" name="{{ product.id }}" class="add_favor {% if product.is_fav %}is_favor{% endif %}"></a></div>
+                <div class="item_pars">{% for fvalue in product.get_published_features %}{{ fvalue.value }}{% if not forloop.last %}/{% endif %}{% endfor %}
+                    {{ product.get_size }}</div>
+                <div class="item_price">{{ product.get_str_price }} <span class="item_price_rub">руб.</span></div>
+            </div>
+        </div>
+    {% else %}
+        <div class="item item_ajax loaded" style="display: none;">
+            <div class="item_img item_img_fly_block">
+                <a href="{{ product.get_absolute_url }}" class="item_img_pic">
+                    {% thumbnail product.image "200x200" as im %}
+                       <img src="{{ im.url }}" width="{{ im.width }}" height="{{ im.height }}" alt="{{ product.title }}" />
+                    {% endthumbnail %}
+                </a>
+            </div>
+            <div class="item_des">
+                <div class="item_name"><a href="{{ product.get_absolute_url }}">{{ product.title }}</a> <a href="#" name="{{ product.id }}" class="add_favor {% if product.is_fav %}is_favor{% endif %}"></a></div>
+                <div class="item_pars">{{ product.get_size }}</div>
+                <div class="item_text">{{ product.short_description|safe }}</div>
+            </div>
+            <div class="item_buy">
+                <div class="item_price">{{ product.get_str_price }} <span class="item_price_rub">руб.</span></div>
+                <div class="submit">
+                    <div>
+                        <a href="#" class="add_to_cart" name="{{ product.id }}">В заказ</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% endif %}
+{% endfor %}

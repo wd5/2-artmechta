@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
-{% load thumbnail products_extras %}
+{% load thumbnail products_extras pagination_tags %}
 
 {% block title %}
     Главная &mdash;
@@ -31,6 +31,7 @@
 {% block main %}
     <h1 class="big_space">Интерьеры с нашими товарами</h1>
     <div class="interers">
+        {% autopaginate interiorPhotos loaded_count %}
         {% for interiorPhoto in interiorPhotos %}
             <div class="interer{% if forloop.first %} col2{% endif %}">
                 {% if forloop.first %}
@@ -46,12 +47,18 @@
             </div>
         {% endfor %}
     </div><!--/interers-->
-{% comment %}    <div class="items_load_out"> TODO! ПОДГРУЗКА
+
+    {% if loaded_count <= interiorPhotos_count %}
+
+    <div class="items_load_out">
         <div class="items_load">
-            <a href="#" class="ajax_lnk">Загрузить еще 12 интерьеров</a>
-            <div>осталось 26</div>
+            <a href="#" class="ajax_lnk interer_ajax_load" name="1">Загрузить еще {% get_next_count interiorPhotos_count loaded_count '' 'loaded' %} интерьеров</a>
+            <div>осталось {% get_next_count interiorPhotos_count loaded_count '' 'remaining' %}</div>
+            <input type="hidden" class="remaining_count" value="{% get_next_count interiorPhotos_count loaded_count '' 'remaining' %}">
         </div>
-    </div>{% endcomment %}
+    </div>
+    {% endif %}
+
 {% endblock %}
 
 {% block footer_class %}{% endblock %}

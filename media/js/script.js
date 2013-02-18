@@ -8,8 +8,6 @@ $(function(){
    		});
    	});
 
-
-
 // каталог и товар
 
     $('a.add_favor').live('click',function(){
@@ -106,6 +104,55 @@ $(function(){
             }
         });
 
+        return false;
+    });
+
+    $('.catalog_ajax_load').live('click',function(){
+        var parent = $('.catalog');
+        $.ajax({
+            url: window.location.pathname+"load_items/",
+            data: {
+                start_count: $(this).attr('name')
+            },
+            type: "POST",
+            success: function(data) {
+                parent.append(data);
+                parent.find('.loaded:eq(0)').fadeIn("fast", function (){ //появление по очереди
+                    $(this).next().fadeIn("fast", arguments.callee);
+                });
+                parent.find('div.item').removeClass('loaded');
+                $('.items_load_out').hide('slow',function(){
+                    $(this).remove();
+                });
+            }
+        });
+        return false;
+    });
+
+    $('.interer_ajax_load').live('click',function(){
+        var next_page_num = parseInt($(this).attr('name'));
+        $.ajax({
+            url: '/',
+            data: {
+                page: ++next_page_num
+            },
+            type: "GET",
+            success: function(data) {
+                var $loaded_interers = $(data);
+                $container.append( $loaded_interers ).masonry( 'appended', $loaded_interers );
+                $container.find('.loaded:eq(0)').fadeIn("fast", function (){ //появление по очереди
+                    $(this).next().fadeIn("fast", arguments.callee);
+                });
+                $container.find('div.interer').removeClass('loaded');
+                $('.items_load_out').not('.new_items_load_out').replaceWith($('.new_items_load_out'));
+                $('.items_load_out').removeClass('new_items_load_out');
+                if ($('.remaining_count').val()=='0'){
+                    $('.items_load_out').fadeOut('slow',function(){
+                        $(this).remove();
+                    });
+                }
+            }
+        });
         return false;
     });
 
