@@ -4,4 +4,5 @@
     <app mountpoint="/">
         <script>django_wsgi</script>
     </app>
+    <touch-reload>/home/user/artmechta/reload.txt</touch-reload>
 </uwsgi>
