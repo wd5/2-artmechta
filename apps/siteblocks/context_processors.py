@@ -11,6 +11,9 @@ def settings(request):
         loaded_count = int(Settings.objects.get(name='loaded_count').value)
     except:
         loaded_count = 3
+    # todo! вставил тут
+    if not request.session.exists(request.session.session_key):
+        request.session.create()
 
     return {
         'contacts': contacts,
